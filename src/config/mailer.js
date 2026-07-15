@@ -37,7 +37,7 @@ const transporter = nodemailer.createTransport({
  * @param {Object|null} [opciones.archivo] - {nombre, ruta}
  * @returns {Promise<{enviado: boolean, asunto: string, para: string, cc?: string, adjunto?: string, messageId?: string, error?: string}>}
  */
-async function enviarEmail({ asunto, contenidoHtml, para, cc = [], archivo = null }) {
+async function enviarEmail({ asunto, contenidoHtml, para, cc = [], archivo = null, firmaAttachments = [] }) {
   const destinatarios = para.join(', ');
   const copias = cc.join(', ');
 
@@ -66,11 +66,16 @@ async function enviarEmail({ asunto, contenidoHtml, para, cc = [], archivo = nul
       mailOptions.cc = copias;
     }
 
+    // Combinar adjuntos: archivo del reporte + imágenes inline de la firma
+    const attachments = [...firmaAttachments];
     if (archivo && archivo.ruta) {
-      mailOptions.attachments = [{
+      attachments.push({
         filename: archivo.nombre,
         path: archivo.ruta
-      }];
+      });
+    }
+    if (attachments.length > 0) {
+      mailOptions.attachments = attachments;
     }
 
     const info = await transporter.sendMail(mailOptions);

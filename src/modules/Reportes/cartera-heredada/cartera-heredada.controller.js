@@ -1,10 +1,10 @@
-const desembolsoCanalService = require('./desembolso-canal.service');
-const { parseFecha, finDeMesAnterior } = require('../../utils/fechas');
-const logger = require('../../utils/logger');
+const carteraHeredadaService = require('./cartera-heredada.service');
+const { parseFecha, finDeMesAnterior } = require('../../../utils/fechas');
+const logger = require('../../../utils/logger');
 
-class DesembolsoCanalController {
+class CarteraHeredadaController {
   /**
-   * POST /api/reportes/desembolso-canal/generar-ahora
+   * POST /api/reportes/cartera-heredada/generar-ahora
    * Body opcional: { "fecha": "20260630" } (o "2026-06-30"); por defecto fin del mes anterior
    */
   async generarAhora(req, res) {
@@ -21,12 +21,12 @@ class DesembolsoCanalController {
         }
       }
 
-      const resultado = await desembolsoCanalService.generarReporte(fechaCierre);
+      const resultado = await carteraHeredadaService.generarReporte(fechaCierre);
 
       if (resultado.success) {
         res.json({
           success: true,
-          mensaje: 'Reporte Desembolso Canal generado y enviado',
+          mensaje: 'Reporte Cartera Heredada PDM generado y enviado',
           data: resultado
         });
       } else {
@@ -37,7 +37,7 @@ class DesembolsoCanalController {
         });
       }
     } catch (error) {
-      logger.error(`Error en controller desembolso canal: ${error.message}`);
+      logger.error(`Error en controller cartera heredada: ${error.message}`);
       res.status(500).json({
         success: false,
         error: error.message
@@ -46,4 +46,4 @@ class DesembolsoCanalController {
   }
 }
 
-module.exports = new DesembolsoCanalController();
+module.exports = new CarteraHeredadaController();

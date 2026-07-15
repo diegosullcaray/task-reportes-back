@@ -1,11 +1,11 @@
-const db = require('../../config/database');
-const { generarExcel } = require('../../utils/excel');
-const { enviarEmail } = require('../../config/mailer');
-const { plantillaCorreoReporte } = require('../../utils/email');
-const destinatarios = require('../../config/destinatarios');
+const db = require('../../../config/database');
+const { generarExcel } = require('../../../utils/excel');
+const { enviarEmail } = require('../../../config/mailer');
+const { plantillaCorreoReporte } = require('../../../utils/email');
+const destinatarios = require('../../../config/destinatarios');
 const queries = require('./desembolso-canal.query');
-const { finDeMesAnterior, aYYYYMMDD } = require('../../utils/fechas');
-const logger = require('../../utils/logger');
+const { finDeMesAnterior, aYYYYMMDD } = require('../../../utils/fechas');
+const logger = require('../../../utils/logger');
 
 class DesembolsoCanalService {
   /**
@@ -36,14 +36,15 @@ class DesembolsoCanalService {
       const archivo = await generarExcel(datos, `Desembolsos_canal_${fecha}.xlsx`);
 
       // 3. Enviar correo
-      const contenidoHtml = plantillaCorreoReporte('Estimados,');
+      const { html: contenidoHtml, firmaAttachments } = plantillaCorreoReporte('Estimados,');
 
       const correo = await enviarEmail({
         asunto: `Desembolso Canal - ${fecha}`,
         contenidoHtml,
         para: destinatarios.desembolsoCanal.para,
         cc: destinatarios.desembolsoCanal.cc,
-        archivo
+        archivo,
+        firmaAttachments
       });
 
       if (!correo.enviado) {

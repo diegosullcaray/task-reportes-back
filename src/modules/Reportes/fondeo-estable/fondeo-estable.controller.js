@@ -1,6 +1,6 @@
 const fondeoEstableService = require('./fondeo-estable.service');
-const { parseFecha, finDeMesAnterior } = require('../../utils/fechas');
-const logger = require('../../utils/logger');
+const { parseFecha, finDeMesAnterior } = require('../../../utils/fechas');
+const logger = require('../../../utils/logger');
 
 class FondeoEstableController {
   /**

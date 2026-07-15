@@ -5,14 +5,14 @@ const db = require('./config/database');
 const logger = require('./utils/logger');
 
 // Importar controllers (tareas manuales vía HTTP)
-const carteraHeredadaController = require('./modules/cartera-heredada/cartera-heredada.controller');
-const desembolsoCanalController = require('./modules/desembolso-canal/desembolso-canal.controller');
-const fondeoEstableController = require('./modules/fondeo-estable/fondeo-estable.controller');
+const carteraHeredadaController = require('./modules/Reportes/cartera-heredada/cartera-heredada.controller');
+const desembolsoCanalController = require('./modules/Reportes/desembolso-canal/desembolso-canal.controller');
+const fondeoEstableController = require('./modules/Reportes/fondeo-estable/fondeo-estable.controller');
 
 // Importar schedules (tareas programadas vía cron)
-const { inicializarSchedules: carteraHeredadaSchedules } = require('./modules/cartera-heredada/cartera-heredada.schedule');
-const { inicializarSchedules: desembolsoCanalSchedules } = require('./modules/desembolso-canal/desembolso-canal.schedule');
-const { inicializarSchedules: fondeoEstableSchedules } = require('./modules/fondeo-estable/fondeo-estable.schedule');
+const { inicializarSchedules: carteraHeredadaSchedules } = require('./modules/Reportes/cartera-heredada/cartera-heredada.schedule');
+const { inicializarSchedules: desembolsoCanalSchedules } = require('./modules/Reportes/desembolso-canal/desembolso-canal.schedule');
+const { inicializarSchedules: fondeoEstableSchedules } = require('./modules/Reportes/fondeo-estable/fondeo-estable.schedule');
 
 const app = express();
 

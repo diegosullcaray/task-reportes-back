@@ -1,11 +1,11 @@
-const db = require('../../config/database');
-const { generarExcel } = require('../../utils/excel');
-const { enviarEmail } = require('../../config/mailer');
-const { plantillaCorreoReporte } = require('../../utils/email');
-const destinatarios = require('../../config/destinatarios');
+const db = require('../../../config/database');
+const { generarExcel } = require('../../../utils/excel');
+const { enviarEmail } = require('../../../config/mailer');
+const { plantillaCorreoReporte } = require('../../../utils/email');
+const destinatarios = require('../../../config/destinatarios');
 const queries = require('./fondeo-estable.query');
-const { finDeMesAnterior, aYYYYMMDD } = require('../../utils/fechas');
-const logger = require('../../utils/logger');
+const { finDeMesAnterior, aYYYYMMDD } = require('../../../utils/fechas');
+const logger = require('../../../utils/logger');
 
 class FondeoEstableService {
   /**
@@ -37,14 +37,15 @@ class FondeoEstableService {
       const archivo = await generarExcel(datos, `Saldo_FondeoEstable_${fecha}.xlsx`);
 
       // 3. Enviar correo
-      const contenidoHtml = plantillaCorreoReporte('Estimado Eddy,');
+      const { html: contenidoHtml, firmaAttachments } = plantillaCorreoReporte('Estimado Eddy,');
 
       const correo = await enviarEmail({
         asunto: `Fondeo Estable - ${fecha}`,
         contenidoHtml,
         para: destinatarios.fondeoEstable.para,
         cc: destinatarios.fondeoEstable.cc,
-        archivo
+        archivo,
+        firmaAttachments
       });
 
       if (!correo.enviado) {

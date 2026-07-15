@@ -1,11 +1,11 @@
-const db = require('../../config/database');
-const { generarExcel } = require('../../utils/excel');
-const { enviarEmail } = require('../../config/mailer');
-const { plantillaCorreoReporte } = require('../../utils/email');
-const destinatarios = require('../../config/destinatarios');
+const db = require('../../../config/database');
+const { generarExcel } = require('../../../utils/excel');
+const { enviarEmail } = require('../../../config/mailer');
+const { plantillaCorreoReporte } = require('../../../utils/email');
+const destinatarios = require('../../../config/destinatarios');
 const queries = require('./cartera-heredada.query');
-const { finDeMesAnterior, aYYYYMMDD, nombreMes, anioCorto } = require('../../utils/fechas');
-const logger = require('../../utils/logger');
+const { finDeMesAnterior, aYYYYMMDD, nombreMes, anioCorto } = require('../../../utils/fechas');
+const logger = require('../../../utils/logger');
 
 class CarteraHeredadaService {
   /**
@@ -38,14 +38,15 @@ class CarteraHeredadaService {
       const archivo = await generarExcel(datos, `PDM Heredado ${mes} ${anioCorto(fechaCierre)}.xlsx`);
 
       // 3. Enviar correo
-      const contenidoHtml = plantillaCorreoReporte('Estimado Alvaro,');
+      const { html: contenidoHtml, firmaAttachments } = plantillaCorreoReporte('Estimado Alvaro,');
 
       const correo = await enviarEmail({
         asunto: `Cartera Heredada PDM - Stock ${mes} ${anio}`,
         contenidoHtml,
         para: destinatarios.carteraHeredada.para,
         cc: destinatarios.carteraHeredada.cc,
-        archivo
+        archivo,
+        firmaAttachments
       });
 
       if (!correo.enviado) {
