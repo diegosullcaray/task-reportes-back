@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+npm-debug.log*
+
+# Configuración
+.env
+.env.local
+
+# Salida
+xlsx_output/*
+!xlsx_output/.gitkeep
+logs/*
+!logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Temporal
+tmp/
+temp/
