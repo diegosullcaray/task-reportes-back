@@ -5,7 +5,7 @@
 
 const FIRMA_NOMBRE = process.env.EMAIL_FIRMA_NOMBRE || 'Diego Denilson Sullcaray Ramos';
 const FIRMA_CARGO = process.env.EMAIL_FIRMA_CARGO || 'Analista de Sistema de la Información y Gestión';
-const FIRMA_DIRECCION = 'Las Begonias 441 oficina 238C, San Isidro, Lima';
+const FIRMA_DIRECCION = 'Las Begonias 441 oficina 338C, San Isidro, Lima';
 const FIRMA_WEB = 'www.confianza.pe';
 
 /**

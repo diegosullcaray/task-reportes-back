@@ -11,35 +11,17 @@ function parseLista(valorEnv, porDefecto) {
 
 module.exports = {
   carteraHeredada: {
-    para: parseLista(process.env.CARTERA_HEREDADA_PARA, [
-      'abigail.jaimes@confianza.pe',
-      'karla.campos@confianza.pe',
-      'ricardo.lazo@confianza.pe',
-      'alvaro.calderon@confianza.pe'
-    ]),
-    cc: parseLista(process.env.CARTERA_HEREDADA_CC, [
-      'michael.palacios@confianza.pe'
-    ])
+    para: parseLista(process.env.CARTERA_HEREDADA_PARA, []),
+    cc: parseLista(process.env.CARTERA_HEREDADA_CC, [])
   },
 
   desembolsoCanal: {
-    para: parseLista(process.env.DESEMBOLSO_CANAL_PARA, [
-      'sergio.sandoval@confianza.pe',
-      'sebastien.puertas@confianza.pe'
-    ]),
-    cc: parseLista(process.env.DESEMBOLSO_CANAL_CC, [
-      'abigail.jaimes@confianza.pe',
-      'michael.palacios@confianza.pe'
-    ])
+    para: parseLista(process.env.DESEMBOLSO_CANAL_PARA, []),
+    cc: parseLista(process.env.DESEMBOLSO_CANAL_CC, [])
   },
 
   fondeoEstable: {
-    para: parseLista(process.env.FONDEO_ESTABLE_PARA, [
-      'eddy.martinez@confianza.pe'
-    ]),
-    cc: parseLista(process.env.FONDEO_ESTABLE_CC, [
-      'michael.palacios@confianza.pe',
-      'abigail.jaimes@confianza.pe'
-    ])
+    para: parseLista(process.env.FONDEO_ESTABLE_PARA, []),
+    cc: parseLista(process.env.FONDEO_ESTABLE_CC, [])
   }
 };

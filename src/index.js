@@ -48,7 +48,7 @@ async function iniciar() {
 
     logger.info(`
 ╔═══════════════════════════════════════════════════════════════════════╗
-║  🚀 Backend de Reportes Iniciado                                       ║
+║     Backend de Reportes Iniciado                                      ║
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  🗄️  Base de datos: ${dbOk ? '✓ CONECTADA' : '✗ SIN CONEXIÓN'} (${process.env.DB_SERVER})
 ║  📧 Correo: ${correoOk ? '✓ VERIFICADO' : '✗ ERROR'} (${process.env.EMAIL_USER})
@@ -56,14 +56,6 @@ async function iniciar() {
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  📖 Documentación Swagger (ejecutar endpoints desde el navegador):
 ║     ${BASE_URL}/api-docs
-╠═══════════════════════════════════════════════════════════════════════╣
-║  🔗 Links de las tareas manuales (POST):
-║     • Cartera Heredada PDM:
-║       ${BASE_URL}/api/reportes/cartera-heredada/generar-ahora
-║     • Desembolso Canal:
-║       ${BASE_URL}/api/reportes/desembolso-canal/generar-ahora
-║     • Fondeo Estable:
-║       ${BASE_URL}/api/reportes/fondeo-estable/generar-ahora
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  🔗 Utilidad (GET):
 ║     • Health:   ${BASE_URL}/health
