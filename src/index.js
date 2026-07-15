@@ -36,7 +36,9 @@ async function iniciar() {
 
   if (!correoOk) {
     logger.warn('⚠️ No se pudo verificar el correo: los reportes se generarán pero el envío fallará.');
-    logger.warn('   Revisar EMAIL_USER y EMAIL_PASSWORD (debe ser contraseña de aplicación de 16 dígitos).');
+    logger.warn('   • Si el error es "Invalid login": EMAIL_PASSWORD debe ser contraseña de aplicación de 16 dígitos.');
+    logger.warn('   • Si el error es ENETUNREACH/ETIMEDOUT: la red/firewall bloquea el SMTP; probar EMAIL_PORT=587');
+    logger.warn('     o pedir a TI que permita salida a smtp.gmail.com (puertos 465/587).');
   }
 
   // 3. Cargar la app (inicializa rutas y tareas programadas) y levantar servidor HTTP

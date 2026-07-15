@@ -1,9 +1,21 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
 const logger = require('../utils/logger');
 
-// Transportador Gmail / Google Workspace (requiere contraseña de aplicación)
+// Preferir IPv4: en redes corporativas sin ruta IPv6, Node intenta primero
+// la IP v6 de Gmail y falla con "connect ENETUNREACH 2800:...:465"
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
+// Transportador Gmail / Google Workspace (requiere contraseña de aplicación).
+// Si el firewall bloquea el puerto 465, probar EMAIL_PORT=587 (STARTTLS).
+const EMAIL_PORT = parseInt(process.env.EMAIL_PORT, 10) || 465;
+
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: EMAIL_PORT,
+  secure: EMAIL_PORT === 465, // 465 = TLS directo; 587 = STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
