@@ -1,69 +1,34 @@
 /**
- * Plantillas HTML compartidas para los emails de reportes
+ * Plantilla HTML corporativa para los correos de reportes.
+ * Firma configurable vía EMAIL_FIRMA_NOMBRE / EMAIL_FIRMA_CARGO.
  */
+
+const FIRMA_NOMBRE = process.env.EMAIL_FIRMA_NOMBRE || 'Diego Denilson Sullcaray Ramos';
+const FIRMA_CARGO = process.env.EMAIL_FIRMA_CARGO || 'Analista de Sistema de la Información y Gestión';
+const FIRMA_DIRECCION = 'Las Begonias 441 oficina 238C, San Isidro, Lima';
+const FIRMA_WEB = 'www.confianza.pe';
 
 /**
- * Genera el HTML estándar de un reporte
- * @param {string} titulo - Título del reporte
- * @param {Array<{label: string, valor: string|number}>} cajas - Datos resumen
+ * Genera el cuerpo HTML estándar de un correo de reporte
+ * @param {string} saludo - Ej. "Estimado Alvaro," / "Estimados,"
+ * @param {string} [mensaje] - Cuerpo del mensaje
  * @returns {string} HTML del email
  */
-function plantillaReporte(titulo, cajas = []) {
-  const cajasHtml = cajas.map(caja => `
-                <div class="info-box">
-                  <strong>${caja.label}</strong>
-                  <span>${caja.valor}</span>
-                </div>`).join('');
-
+function plantillaCorreoReporte(saludo, mensaje = 'se le adjunta lo solicitado') {
   return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
-        <style>
-          body { font-family: Arial, sans-serif; background-color: #f5f5f5; }
-          .container { background: white; padding: 20px; border-radius: 5px; max-width: 600px; margin: 20px auto; }
-          h2 { color: #4285F4; border-bottom: 3px solid #4285F4; padding-bottom: 10px; }
-          .info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-          .info-box { background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 4px solid #4285F4; }
-          .info-box strong { color: #333; display: block; }
-          .info-box span { color: #666; }
-          .footer { color: #999; font-size: 12px; text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h2>${titulo}</h2>
+    <div style="font-family: Arial, sans-serif; font-size: 14px; color: #222;">
+      <p>${saludo}<br>${mensaje}</p>
 
-          <div class="info">${cajasHtml}
-          </div>
+      <p>--<br>Saludos,</p>
 
-          <p>El archivo Excel con el detalle completo está adjunto.</p>
-
-          <div class="footer">
-            <p>Reporte automático generado por Backend de Reportes</p>
-            <p>No responder a este correo</p>
-          </div>
-        </div>
-      </body>
-    </html>
+      <p style="margin: 0;">
+        <strong style="color: #0072CE;">${FIRMA_NOMBRE}</strong><br>
+        <strong>${FIRMA_CARGO}</strong><br>
+        <span style="color: #0072CE;">${FIRMA_DIRECCION}</span><br>
+        <a href="https://${FIRMA_WEB}" style="color: #0072CE; font-weight: bold;">${FIRMA_WEB}</a>
+      </p>
+    </div>
   `;
 }
 
-/**
- * Caja de fecha/hora estándar para los resúmenes
- */
-function cajasFechaHora() {
-  return [
-    {
-      label: '📅 Fecha',
-      valor: new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })
-    },
-    {
-      label: '⏰ Hora Reporte',
-      valor: new Date().toLocaleTimeString('es-ES')
-    }
-  ];
-}
-
-module.exports = { plantillaReporte, cajasFechaHora };
+module.exports = { plantillaCorreoReporte };

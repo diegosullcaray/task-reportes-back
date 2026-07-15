@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 const logger = require('../utils/logger');
 
-// Transportador Gmail (requiere contraseña de aplicación)
+// Transportador Gmail / Google Workspace (requiere contraseña de aplicación)
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -11,25 +11,27 @@ const transporter = nodemailer.createTransport({
 });
 
 /**
- * Envía email con reporte adjunto (opcional)
- * @param {string} asunto - Asunto del email
- * @param {string} contenidoHtml - HTML del cuerpo
- * @param {Object|null} archivo - {nombre, ruta}
+ * Envía email con reporte adjunto
+ * @param {Object} opciones
+ * @param {string} opciones.asunto - Asunto del email
+ * @param {string} opciones.contenidoHtml - HTML del cuerpo
+ * @param {string[]} opciones.para - Destinatarios principales
+ * @param {string[]} [opciones.cc] - Destinatarios en copia
+ * @param {Object|null} [opciones.archivo] - {nombre, ruta}
  * @returns {Promise<boolean>}
  */
-async function enviarEmail(asunto, contenidoHtml, archivo = null) {
+async function enviarEmail({ asunto, contenidoHtml, para, cc = [], archivo = null }) {
   try {
-    const destinatarios = [process.env.EMAIL_RECIPIENT];
-    if (process.env.EMAIL_RECIPIENT_BACKUP) {
-      destinatarios.push(process.env.EMAIL_RECIPIENT_BACKUP);
-    }
-
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: destinatarios.join(', '),
+      to: para.join(', '),
       subject: asunto,
       html: contenidoHtml
     };
+
+    if (cc.length > 0) {
+      mailOptions.cc = cc.join(', ');
+    }
 
     if (archivo && archivo.ruta) {
       mailOptions.attachments = [{
@@ -40,27 +42,27 @@ async function enviarEmail(asunto, contenidoHtml, archivo = null) {
 
     const info = await transporter.sendMail(mailOptions);
 
-    logger.info(`✓ Email enviado: ${asunto}`);
+    logger.info(`✓ Email enviado: ${asunto} → ${mailOptions.to}${cc.length ? ` (cc: ${mailOptions.cc})` : ''}`);
     logger.debug(`MessageID: ${info.messageId}`);
 
     return true;
   } catch (error) {
-    logger.error(`✗ Error enviando email: ${error.message}`);
+    logger.error(`✗ Error enviando email "${asunto}": ${error.message}`);
     return false;
   }
 }
 
 /**
- * Verifica conexión a Gmail
+ * Verifica conexión al servidor de correo
  * @returns {Promise<boolean>}
  */
 async function verificarConexion() {
   try {
     await transporter.verify();
-    logger.info('✓ Conexión Gmail verificada');
+    logger.info('✓ Conexión de correo verificada');
     return true;
   } catch (error) {
-    logger.error(`✗ Error conexión Gmail: ${error.message}`);
+    logger.error(`✗ Error conexión de correo: ${error.message}`);
     return false;
   }
 }

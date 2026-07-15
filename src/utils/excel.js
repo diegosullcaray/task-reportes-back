@@ -13,10 +13,10 @@ if (!fs.existsSync(excelOutputPath)) {
 /**
  * Genera archivo Excel con formato
  * @param {Array<Object>} datos - Array de objetos con datos
- * @param {string} nombreReporte - Nombre del reporte
+ * @param {string} nombreArchivo - Nombre exacto del archivo (ej. "Desembolsos_canal_20260630.xlsx")
  * @returns {Promise<Object>} {nombre, ruta, filas}
  */
-async function generarExcel(datos, nombreReporte) {
+async function generarExcel(datos, nombreArchivo) {
   try {
     if (!datos || datos.length === 0) {
       throw new Error('No hay datos para generar Excel');
@@ -73,9 +73,6 @@ async function generarExcel(datos, nombreReporte) {
     worksheet.views = [{ state: 'frozen', ySplit: 1 }];
 
     // Guardar archivo
-    const fecha = new Date().toISOString().split('T')[0];
-    const timestamp = Date.now();
-    const nombreArchivo = `${nombreReporte}_${fecha}_${timestamp}.xlsx`;
     const rutaCompleta = path.join(excelOutputPath, nombreArchivo);
 
     await workbook.xlsx.writeFile(rutaCompleta);

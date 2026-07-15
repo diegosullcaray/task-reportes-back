@@ -12,8 +12,8 @@ const env = {
   email: {
     user: process.env.EMAIL_USER,
     password: process.env.EMAIL_PASSWORD,
-    recipient: process.env.EMAIL_RECIPIENT,
-    recipientBackup: process.env.EMAIL_RECIPIENT_BACKUP
+    firmaNombre: process.env.EMAIL_FIRMA_NOMBRE,
+    firmaCargo: process.env.EMAIL_FIRMA_CARGO
   },
   app: {
     port: process.env.PORT || 3000,
