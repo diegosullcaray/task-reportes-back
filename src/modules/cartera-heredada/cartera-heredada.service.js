@@ -40,7 +40,7 @@ class CarteraHeredadaService {
       // 3. Enviar correo
       const contenidoHtml = plantillaCorreoReporte('Estimado Alvaro,');
 
-      const enviado = await enviarEmail({
+      const correo = await enviarEmail({
         asunto: `Cartera Heredada PDM - Stock ${mes} ${anio}`,
         contenidoHtml,
         para: destinatarios.carteraHeredada.para,
@@ -48,13 +48,25 @@ class CarteraHeredadaService {
         archivo
       });
 
-      logger.info('✅ [CARTERA HEREDADA] Reporte completado');
+      if (!correo.enviado) {
+        logger.warn(`⚠️ [CARTERA HEREDADA] Excel generado pero el correo NO se envió: ${correo.error}`);
+        return {
+          success: false,
+          mensaje: `Excel generado (${archivo.nombre}, ${archivo.filas} filas) pero el correo NO se envió: ${correo.error}`,
+          archivo: archivo.nombre,
+          filas: archivo.filas,
+          fechaCierre: fecha,
+          correo
+        };
+      }
+
+      logger.info('✅ [CARTERA HEREDADA] Reporte completado y correo enviado');
       return {
         success: true,
         archivo: archivo.nombre,
         filas: archivo.filas,
         fechaCierre: fecha,
-        emailEnviado: enviado
+        correo
       };
 
     } catch (error) {

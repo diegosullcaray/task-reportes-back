@@ -38,7 +38,7 @@ class DesembolsoCanalService {
       // 3. Enviar correo
       const contenidoHtml = plantillaCorreoReporte('Estimados,');
 
-      const enviado = await enviarEmail({
+      const correo = await enviarEmail({
         asunto: `Desembolso Canal - ${fecha}`,
         contenidoHtml,
         para: destinatarios.desembolsoCanal.para,
@@ -46,13 +46,25 @@ class DesembolsoCanalService {
         archivo
       });
 
-      logger.info('✅ [DESEMBOLSO CANAL] Reporte completado');
+      if (!correo.enviado) {
+        logger.warn(`⚠️ [DESEMBOLSO CANAL] Excel generado pero el correo NO se envió: ${correo.error}`);
+        return {
+          success: false,
+          mensaje: `Excel generado (${archivo.nombre}, ${archivo.filas} filas) pero el correo NO se envió: ${correo.error}`,
+          archivo: archivo.nombre,
+          filas: archivo.filas,
+          fechaCierre: fecha,
+          correo
+        };
+      }
+
+      logger.info('✅ [DESEMBOLSO CANAL] Reporte completado y correo enviado');
       return {
         success: true,
         archivo: archivo.nombre,
         filas: archivo.filas,
         fechaCierre: fecha,
-        emailEnviado: enviado
+        correo
       };
 
     } catch (error) {

@@ -32,7 +32,8 @@ class CarteraHeredadaController {
       } else {
         res.status(400).json({
           success: false,
-          mensaje: resultado.mensaje
+          mensaje: resultado.mensaje,
+          data: resultado
         });
       }
     } catch (error) {

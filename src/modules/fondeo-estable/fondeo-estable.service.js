@@ -39,7 +39,7 @@ class FondeoEstableService {
       // 3. Enviar correo
       const contenidoHtml = plantillaCorreoReporte('Estimado Eddy,');
 
-      const enviado = await enviarEmail({
+      const correo = await enviarEmail({
         asunto: `Fondeo Estable - ${fecha}`,
         contenidoHtml,
         para: destinatarios.fondeoEstable.para,
@@ -47,13 +47,25 @@ class FondeoEstableService {
         archivo
       });
 
-      logger.info('✅ [FONDEO ESTABLE] Reporte completado');
+      if (!correo.enviado) {
+        logger.warn(`⚠️ [FONDEO ESTABLE] Excel generado pero el correo NO se envió: ${correo.error}`);
+        return {
+          success: false,
+          mensaje: `Excel generado (${archivo.nombre}, ${archivo.filas} filas) pero el correo NO se envió: ${correo.error}`,
+          archivo: archivo.nombre,
+          filas: archivo.filas,
+          fechaCierre: fecha,
+          correo
+        };
+      }
+
+      logger.info('✅ [FONDEO ESTABLE] Reporte completado y correo enviado');
       return {
         success: true,
         archivo: archivo.nombre,
         filas: archivo.filas,
         fechaCierre: fecha,
-        emailEnviado: enviado
+        correo
       };
 
     } catch (error) {

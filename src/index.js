@@ -1,6 +1,7 @@
 require('./config/env'); // Cargar y validar .env antes que todo
 const os = require('os');
 const db = require('./config/database');
+const { verificarConexion: verificarCorreo } = require('./config/mailer');
 const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 3000;
@@ -29,7 +30,16 @@ async function iniciar() {
     logger.warn('   Los reportes fallarán hasta que la BD esté disponible (reintentan en cada ejecución).');
   }
 
-  // 2. Cargar la app (inicializa rutas y tareas programadas) y levantar servidor HTTP
+  // 2. Verificar conexión al correo (los reportes se envían por Gmail/Workspace)
+  logger.info(`🔍 Verificando conexión de correo (${process.env.EMAIL_USER})...`);
+  const correoOk = await verificarCorreo();
+
+  if (!correoOk) {
+    logger.warn('⚠️ No se pudo verificar el correo: los reportes se generarán pero el envío fallará.');
+    logger.warn('   Revisar EMAIL_USER y EMAIL_PASSWORD (debe ser contraseña de aplicación de 16 dígitos).');
+  }
+
+  // 3. Cargar la app (inicializa rutas y tareas programadas) y levantar servidor HTTP
   const app = require('./app');
   const server = app.listen(PORT, HOST, () => {
     const BASE_URL = `http://${obtenerIpLocal()}:${PORT}`;
@@ -39,6 +49,7 @@ async function iniciar() {
 ║  🚀 Backend de Reportes Iniciado                                       ║
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  🗄️  Base de datos: ${dbOk ? '✓ CONECTADA' : '✗ SIN CONEXIÓN'} (${process.env.DB_SERVER})
+║  📧 Correo: ${correoOk ? '✓ VERIFICADO' : '✗ ERROR'} (${process.env.EMAIL_USER})
 ║  📍 Escuchando en: ${HOST}:${PORT}
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  📖 Documentación Swagger (ejecutar endpoints desde el navegador):

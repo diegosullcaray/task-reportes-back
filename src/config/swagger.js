@@ -38,7 +38,19 @@ const respuestas = (descripcion200) => ({
                 archivo: { type: 'string', example: 'Desembolsos_canal_20260630.xlsx' },
                 filas: { type: 'integer', example: 1250 },
                 fechaCierre: { type: 'string', example: '20260630' },
-                emailEnviado: { type: 'boolean', example: true }
+                correo: {
+                  type: 'object',
+                  description: 'Detalle del proceso de envío del correo',
+                  properties: {
+                    enviado: { type: 'boolean', example: true },
+                    asunto: { type: 'string', example: 'Desembolso Canal - 20260630' },
+                    para: { type: 'string', example: 'sergio.sandoval@confianza.pe, sebastien.puertas@confianza.pe' },
+                    cc: { type: 'string', example: 'abigail.jaimes@confianza.pe, michael.palacios@confianza.pe' },
+                    adjunto: { type: 'string', example: 'Desembolsos_canal_20260630.xlsx' },
+                    messageId: { type: 'string', example: '<abc123@confianza.pe>' },
+                    error: { type: 'string', description: 'Motivo del fallo cuando enviado=false' }
+                  }
+                }
               }
             }
           }
