@@ -1,4 +1,7 @@
 const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDoc = require('./config/swagger');
+const db = require('./config/database');
 const logger = require('./utils/logger');
 
 // Importar controllers (tareas manuales vía HTTP)
@@ -23,6 +26,11 @@ app.use((req, res, next) => {
   next();
 });
 
+// ============== DOCUMENTACIÓN SWAGGER ==============
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc, {
+  customSiteTitle: 'Backend de Reportes - API Docs'
+}));
+
 // ============== RUTAS REPORTES MENSUALES ==============
 // Body opcional en todas: { "fecha": "20260630" } — por defecto fin del mes anterior
 
@@ -42,30 +50,38 @@ app.post('/api/reportes/fondeo-estable/generar-ahora', (req, res) =>
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
+    baseDatos: db.estado,
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
 });
 
 app.get('/api/info', (req, res) => {
+  const baseUrl = `${req.protocol}://${req.get('host')}`;
+
   res.json({
     nombre: 'Backend de Reportes',
     version: '2.0.0',
     ambiente: process.env.NODE_ENV,
+    documentacion: `${baseUrl}/api-docs`,
+    baseDatos: db.estado,
     reportes: {
       carteraHeredada: {
         descripcion: 'Cartera Heredada PDM - Stock mensual (Servidor 213, requiere cubo y PDM completos)',
         endpoint: 'POST /api/reportes/cartera-heredada/generar-ahora',
+        link: `${baseUrl}/api/reportes/cartera-heredada/generar-ahora`,
         schedule: 'Día 2 de cada mes 9:00 AM'
       },
       desembolsoCanal: {
         descripcion: 'Desembolsos por canal (BT/CT) al cierre de mes',
         endpoint: 'POST /api/reportes/desembolso-canal/generar-ahora',
+        link: `${baseUrl}/api/reportes/desembolso-canal/generar-ahora`,
         schedule: 'Día 1 de cada mes 2:30 PM'
       },
       fondeoEstable: {
         descripcion: 'Saldo de fondeo estable al cierre de mes',
         endpoint: 'POST /api/reportes/fondeo-estable/generar-ahora',
+        link: `${baseUrl}/api/reportes/fondeo-estable/generar-ahora`,
         schedule: 'Día 1 de cada mes 9:00 AM'
       }
     }

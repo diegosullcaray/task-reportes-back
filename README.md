@@ -16,6 +16,30 @@ Los tres reportes usan como fecha de cierre el **fin del mes anterior** (ej. si 
 
 > 📌 **Cartera Heredada PDM** requiere que toda la data del cubo y PDM estén completadas en el Servidor 213; por eso corre el día 2. Si aún no está lista, relanzar manualmente con el endpoint.
 
+## Documentación Swagger
+
+Con el servidor corriendo, la documentación interactiva está en:
+
+```
+http://localhost:3000/api-docs
+```
+
+Desde ahí se puede ver y **ejecutar** cada endpoint con "Try it out" (destinatarios, adjuntos y horarios incluidos en la descripción de cada reporte).
+
+## Arranque
+
+Al iniciar, el servidor **primero verifica la conexión a SQL Server** y luego muestra los links de todos los endpoints:
+
+```
+🔍 Verificando conexión a SQL Server (servidor-213 / storage)...
+✓ Conexión SQL Server verificada
+...
+📖 Documentación Swagger: http://localhost:3000/api-docs
+🔗 Links de las tareas manuales (POST): ...
+```
+
+Si la BD no responde, el servidor arranca igual (los reportes reintentan la conexión en cada ejecución) y el estado se refleja en `GET /health` (`baseDatos: CONECTADA | SIN CONEXIÓN`).
+
 ## Tareas manuales (endpoints HTTP)
 
 Todas aceptan un body opcional `{ "fecha": "20260630" }` (o `"2026-06-30"`) para regenerar un cierre específico; sin body usan el fin del mes anterior.
@@ -25,8 +49,9 @@ POST /api/reportes/cartera-heredada/generar-ahora
 POST /api/reportes/desembolso-canal/generar-ahora
 POST /api/reportes/fondeo-estable/generar-ahora
 
-GET /health      # health check
-GET /api/info    # lista de reportes, endpoints y horarios
+GET /health      # health check + estado de la BD
+GET /api/info    # lista de reportes con links, endpoints y horarios
+GET /api-docs    # documentación Swagger interactiva
 ```
 
 Ejemplo:

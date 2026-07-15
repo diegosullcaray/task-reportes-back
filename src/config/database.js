@@ -10,6 +10,11 @@ const logger = require('../utils/logger');
  *   programadas reintentan en su próxima ejecución)
  */
 class Database {
+  constructor() {
+    // Último estado conocido de la conexión (se actualiza en cada query/verificación)
+    this.estado = 'NO VERIFICADA';
+  }
+
   buildConfig() {
     // Con DB_USERNAME/DB_PASSWORD usa SQL Auth; vacíos usa Windows Auth
     const userName = process.env.DB_USERNAME || undefined;
@@ -47,9 +52,11 @@ class Database {
 
       connection.connect((err) => {
         if (err) {
+          this.estado = 'SIN CONEXIÓN';
           logger.error(`✗ Error conectando a SQL Server: ${err.message}`);
           reject(err);
         } else {
+          this.estado = 'CONECTADA';
           logger.debug('✓ Conectado a SQL Server');
           resolve(connection);
         }
@@ -100,10 +107,10 @@ class Database {
   async verificarConexion() {
     try {
       await this.ejecutarQuery('SELECT 1 AS ok');
-      logger.info('✓ Conexión SQL Server verificada');
+      logger.info(`✓ Conexión SQL Server verificada (${process.env.DB_SERVER} / ${process.env.DB_DATABASE})`);
       return true;
     } catch (error) {
-      logger.error(`✗ No se pudo verificar la conexión SQL Server: ${error.message}`);
+      logger.error(`✗ No se pudo verificar la conexión SQL Server (${process.env.DB_SERVER}): ${error.message}`);
       return false;
     }
   }
