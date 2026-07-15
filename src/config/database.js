@@ -16,29 +16,39 @@ class Database {
   }
 
   buildConfig() {
-    // Con DB_USERNAME/DB_PASSWORD usa SQL Auth; vacíos usa Windows Auth
     const userName = process.env.DB_USERNAME || undefined;
     const password = process.env.DB_PASSWORD || undefined;
+    const domain = process.env.DB_DOMAIN || undefined;
+
+    // Con DB_DOMAIN usa Windows Authentication (NTLM), igual que SSMS:
+    //   Server: MISHWBDDES01, User: BCF\TDSUR100
+    //   → DB_DOMAIN=BCF, DB_USERNAME=TDSUR100, DB_PASSWORD=<contraseña de Windows>
+    // Sin DB_DOMAIN usa SQL Server Authentication (usuario/contraseña SQL)
+    const authentication = domain
+      ? { type: 'ntlm', options: { userName, password, domain } }
+      : { type: 'default', options: { userName, password } };
+
+    const options = {
+      database: process.env.DB_DATABASE,
+      encrypt: process.env.DB_ENCRYPTION === 'true',
+      trustServerCertificate: process.env.DB_TRUST_CERTIFICATE === 'true',
+      rowCollectionOnRequestCompletion: false,
+      enableKeepAlive: true,
+      connectTimeout: 15000,
+      requestTimeout: 120000
+    };
+
+    // Instancia con nombre (ej. MISHWBDDES01\SQLEXPRESS) o puerto fijo
+    if (process.env.DB_INSTANCE) {
+      options.instanceName = process.env.DB_INSTANCE;
+    } else {
+      options.port = parseInt(process.env.DB_PORT, 10) || 1433;
+    }
 
     return {
       server: process.env.DB_SERVER,
-      authentication: {
-        type: 'default',
-        options: {
-          userName,
-          password,
-          domain: undefined
-        }
-      },
-      options: {
-        database: process.env.DB_DATABASE,
-        encrypt: process.env.DB_ENCRYPTION === 'true',
-        trustServerCertificate: process.env.DB_TRUST_CERTIFICATE === 'true',
-        rowCollectionOnRequestCompletion: false,
-        enableKeepAlive: true,
-        connectTimeout: 15000,
-        requestTimeout: 60000
-      }
+      authentication,
+      options
     };
   }
 

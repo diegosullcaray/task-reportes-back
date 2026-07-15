@@ -31,12 +31,14 @@ Desde ahí se puede ver y **ejecutar** cada endpoint con "Try it out" (destinata
 Al iniciar, el servidor **primero verifica la conexión a SQL Server** y luego muestra los links de todos los endpoints:
 
 ```
-🔍 Verificando conexión a SQL Server (servidor-213 / storage)...
+🔍 Verificando conexión a SQL Server (MISHWBDDES01 / storage, Windows Auth: BCF\TDSUR100)...
 ✓ Conexión SQL Server verificada
 ...
-📖 Documentación Swagger: http://localhost:3000/api-docs
+📖 Documentación Swagger: http://<ip-de-tu-máquina>:3000/api-docs
 🔗 Links de las tareas manuales (POST): ...
 ```
+
+El servidor escucha en `0.0.0.0`, así que los endpoints son accesibles tanto por `localhost` como por la IP de la máquina en la red (los links del arranque ya muestran la IP real).
 
 Si la BD no responde, el servidor arranca igual (los reportes reintentan la conexión en cada ejecución) y el estado se refleja en `GET /health` (`baseDatos: CONECTADA | SIN CONEXIÓN`).
 
@@ -73,15 +75,29 @@ npm start              # producción
 
 ## Configuración (.env)
 
+La conexión a SQL Server usa los **mismos datos que la ventana "Connect to Server" de SSMS**. Para Windows Authentication (ej. `BCF\TDSUR100` contra `MISHWBDDES01`):
+
+```env
+DB_SERVER=MISHWBDDES01
+DB_DATABASE=storage
+DB_DOMAIN=BCF
+DB_USERNAME=TDSUR100
+DB_PASSWORD=tu-contraseña-de-windows
+DB_ENCRYPTION=false
+DB_TRUST_CERTIFICATE=true
+```
+
 | Variable | Descripción |
 |---|---|
-| `DB_SERVER` / `DB_DATABASE` | Servidor 213 y base inicial (las queries usan nombres calificados: `storage`, `dma`, `dwh`) |
-| `DB_USERNAME` / `DB_PASSWORD` | Vacíos = Windows Auth; con valores = SQL Auth |
+| `DB_SERVER` / `DB_DATABASE` | Nombre del servidor (como en SSMS) y base inicial (las queries usan nombres calificados: `storage`, `dma`, `dwh`) |
+| `DB_DOMAIN` | Dominio Windows (ej. `BCF`). Con valor → Windows Authentication (NTLM), igual que SSMS. Vacío → SQL Auth |
+| `DB_USERNAME` / `DB_PASSWORD` | Usuario y contraseña (de Windows si hay dominio, de SQL si no) |
+| `DB_INSTANCE` / `DB_PORT` | Instancia con nombre (ej. `SQLEXPRESS`) o puerto fijo (default 1433) |
 | `EMAIL_USER` / `EMAIL_PASSWORD` | `diego.sullcaray@confianza.pe` + contraseña de aplicación de Google (16 dígitos) |
 | `EMAIL_FIRMA_NOMBRE` / `EMAIL_FIRMA_CARGO` | Firma que aparece en los correos |
 | `CARTERA_HEREDADA_PARA` / `_CC`, `DESEMBOLSO_CANAL_PARA` / `_CC`, `FONDEO_ESTABLE_PARA` / `_CC` | Sobreescriben los destinatarios por defecto (listas separadas por comas) |
 | `TZ_SCHEDULES` | Zona horaria de los cron jobs (`America/Lima`) |
-| `PORT` | Puerto HTTP (default 3000) |
+| `HOST` / `PORT` | Dónde escucha el servidor. `HOST=0.0.0.0` (default) lo hace accesible desde la red por la IP de la máquina |
 
 ## Estructura
 

@@ -1,13 +1,27 @@
 require('./config/env'); // Cargar y validar .env antes que todo
+const os = require('os');
 const db = require('./config/database');
 const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 3000;
-const BASE_URL = `http://localhost:${PORT}`;
+const HOST = process.env.HOST || '0.0.0.0'; // 0.0.0.0 = accesible desde la red por la IP de la máquina
+
+/**
+ * IP local (IPv4, no interna) para mostrar los links accesibles desde la red
+ */
+function obtenerIpLocal() {
+  const interfaces = Object.values(os.networkInterfaces()).flat();
+  const externa = interfaces.find(i => i && i.family === 'IPv4' && !i.internal);
+  return externa ? externa.address : 'localhost';
+}
 
 async function iniciar() {
   // 1. Verificar conexión a la base de datos ANTES de todo
-  logger.info(`🔍 Verificando conexión a SQL Server (${process.env.DB_SERVER} / ${process.env.DB_DATABASE})...`);
+  const modoAuth = process.env.DB_DOMAIN
+    ? `Windows Auth: ${process.env.DB_DOMAIN}\\${process.env.DB_USERNAME}`
+    : 'SQL Auth';
+
+  logger.info(`🔍 Verificando conexión a SQL Server (${process.env.DB_SERVER} / ${process.env.DB_DATABASE}, ${modoAuth})...`);
   const dbOk = await db.verificarConexion();
 
   if (!dbOk) {
@@ -17,13 +31,15 @@ async function iniciar() {
 
   // 2. Cargar la app (inicializa rutas y tareas programadas) y levantar servidor HTTP
   const app = require('./app');
-  const server = app.listen(PORT, () => {
+  const server = app.listen(PORT, HOST, () => {
+    const BASE_URL = `http://${obtenerIpLocal()}:${PORT}`;
+
     logger.info(`
 ╔═══════════════════════════════════════════════════════════════════════╗
 ║  🚀 Backend de Reportes Iniciado                                       ║
 ╠═══════════════════════════════════════════════════════════════════════╣
-║  🗄️  Base de datos: ${dbOk ? '✓ CONECTADA' : '✗ SIN CONEXIÓN'}
-║  📍 Puerto: ${PORT}
+║  🗄️  Base de datos: ${dbOk ? '✓ CONECTADA' : '✗ SIN CONEXIÓN'} (${process.env.DB_SERVER})
+║  📍 Escuchando en: ${HOST}:${PORT}
 ╠═══════════════════════════════════════════════════════════════════════╣
 ║  📖 Documentación Swagger (ejecutar endpoints desde el navegador):
 ║     ${BASE_URL}/api-docs

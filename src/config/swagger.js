@@ -3,8 +3,6 @@
  * Documenta las tareas manuales del backend de reportes.
  */
 
-const PORT = process.env.PORT || 3000;
-
 const bodyFecha = {
   required: false,
   content: {
@@ -89,7 +87,7 @@ module.exports = {
       + 'genera un Excel en xlsx_output/ y lo envía por correo a sus destinatarios.'
   },
   servers: [
-    { url: `http://localhost:${PORT}`, description: 'Servidor local' }
+    { url: '/', description: 'Este servidor (funciona con localhost o con la IP de la máquina)' }
   ],
   tags: [
     { name: 'Reportes Mensuales', description: 'Ejecución manual de los reportes (por defecto al cierre del mes anterior)' },
