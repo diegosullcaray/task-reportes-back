@@ -46,12 +46,15 @@ src/
 │   │   ├── ratio-ce/                   # Variante SIN Excel: el resultado va como tablas HTML
 │   │   │                               #   en el cuerpo del correo (reproduce la tabla dinámica)
 │   │   └── reportes.schedules.js       # Agrega los inicializarSchedules() de cada reporte en uno solo
-│   └── validaciones/
-│       └── control-cargas/             # GET de solo lectura, sin schedule (se consulta a demanda)
-│           ├── *.controller.js
-│           ├── *.routes.js
-│           ├── *.service.js
-│           └── *.query.js
+│   ├── validaciones/
+│   │   ├── control-cargas/             # GET a demanda + cron cada 5 min; notifica a Google Chat
+│   │   │   ├── *.controller.js
+│   │   │   ├── *.routes.js
+│   │   │   ├── *.service.js            #   valida cargas y notifica a Chat en cada ejecución
+│   │   │   ├── *.query.js
+│   │   │   └── *.schedule.js           #   node-cron cada 5 min (CONTROL_CARGAS_CRON)
+│   │   └── validaciones.schedules.js   # Agrega los schedules del módulo validaciones
+│   └── schedules.js                    # Agregador raíz: arranca schedules de reportes + validaciones
 │
 └── shared/                             # Reutilizable por cualquier módulo, sin lógica de negocio
     ├── errors/                         # BaseError → ValidationError (400) / DatabaseError (500)
@@ -91,8 +94,12 @@ routes.js (infrastructure/server)
 
 ```
 server.js → require('./infrastructure/server/app') → app.js → inicializarSchedules()
-  → reportes.schedules.js → cada *.schedule.js → node-cron dispara → *.service.js (mismo código que el manual)
+  → modules/schedules.js → reportes.schedules.js + validaciones.schedules.js
+  → cada *.schedule.js → node-cron dispara → *.service.js (mismo código que el manual)
 ```
+
+Reportes mensuales: cron mensual (día 1-3). Control de cargas: cron cada 5 minutos que
+consulta el estado y notifica el resultado a Google Chat (webhook), sin intervención manual.
 
 ## Convenciones
 

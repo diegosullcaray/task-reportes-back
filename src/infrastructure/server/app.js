@@ -2,7 +2,7 @@ const express = require('express');
 const applyMiddlewares = require('./middlewares');
 const routes = require('./routes');
 const { notFoundHandler, errorHandler } = require('./errorHandler');
-const { inicializarSchedules } = require('../../modules/reportes/reportes.schedules');
+const { inicializarSchedules } = require('../../modules/schedules');
 const logger = require('../logging/logger');
 
 const app = express();

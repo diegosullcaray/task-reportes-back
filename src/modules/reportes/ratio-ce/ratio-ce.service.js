@@ -41,10 +41,11 @@ class RatioCEService {
         };
       }
 
-      // 2. Construir las tablas HTML del correo
-      const tablaRatioHtml = this._construirTablaRatioCE(datosRatio);
+      // 2. Construir el cuerpo del correo: bloques de desembolsos CE (texto,
+      //    como en el correo original de Pierro) + tabla dinámica de clientes
+      const bloquesCEHtml = this._construirBloqueCE(datosRatio);
       const { html: tablaClientesHtml, totalGeneral } = this._construirTablaClientes(datosClientes, fechaCierre);
-      const cuerpoHtml = `${tablaRatioHtml}${tablaClientesHtml}`;
+      const cuerpoHtml = `${bloquesCEHtml}${tablaClientesHtml}`;
 
       // 3. Enviar correo (sin adjunto: el resultado va en el cuerpo)
       const { html: contenidoHtml, firmaAttachments } = plantillaCorreoReporteHtml({
@@ -88,35 +89,30 @@ class RatioCEService {
   }
 
   /**
-   * Tabla "Ratio CE": Habilitados vs CE (operaciones y monto) + el ratio CE/Habilitados.
+   * Bloques de texto de los desembolsos CE, tal cual el correo original:
+   *
+   *   Desembolsos habilitados posibles desembolsos CE
+   *   Operación: 35848
+   *   Monto: 129,738,729.43
+   *
+   *   Desembolsos CE
+   *   Operación: 28125
+   *   Monto: 90,864,991.82
    */
-  _construirTablaRatioCE(datosRatio) {
+  _construirBloqueCE(datosRatio) {
     if (!datosRatio || datosRatio.length === 0) return '';
 
     const porTipo = (tipo) => datosRatio.find(r => r.tipo === tipo) || { operaciones: 0, monto: 0 };
     const habilitados = porTipo('Habilitados');
     const ce = porTipo('CE');
 
-    const ratio = (parte, total) => {
-      const t = Number(total);
-      return t > 0 ? `${((Number(parte) / t) * 100).toLocaleString('es-PE', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%` : '—';
-    };
+    const bloque = (titulo, dato) => `
+      <p style="margin: 14px 0 2px;"><strong>${titulo}</strong></p>
+      <p style="margin: 0 0 4px;">Operación: ${formatearEntero(dato.operaciones)}<br>Monto: ${formatearMonto(dato.monto)}</p>`;
 
-    const filas = [
-      [{ valor: 'Habilitados' }, { valor: formatearEntero(habilitados.operaciones) }, { valor: formatearMonto(habilitados.monto) }],
-      [{ valor: 'CE' }, { valor: formatearEntero(ce.operaciones) }, { valor: formatearMonto(ce.monto) }],
-      [
-        { valor: 'Ratio CE', negrita: true, fondo: '#eaf3fb' },
-        { valor: ratio(ce.operaciones, habilitados.operaciones), negrita: true, fondo: '#eaf3fb' },
-        { valor: ratio(ce.monto, habilitados.monto), negrita: true, fondo: '#eaf3fb' }
-      ]
-    ];
-
-    return construirTablaHtml({
-      titulo: 'Ratio CE',
-      columnas: ['Tipo', 'Operaciones', 'Monto (MN)'],
-      filas
-    });
+    return `
+      ${bloque('Desembolsos habilitados posibles desembolsos CE', habilitados)}
+      ${bloque('Desembolsos CE', ce)}`;
   }
 
   /**

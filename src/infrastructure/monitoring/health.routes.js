@@ -55,9 +55,10 @@ router.get('/api/info', (req, res) => {
     },
     validaciones: {
       controlCargas: {
-        descripcion: 'Control y verificación del estado de las cargas en el servidor de Base de Datos (Activas, Pasivas, etc.)',
+        descripcion: 'Control y verificación del estado de las cargas en el servidor de Base de Datos (Activas, Pasivas, etc.). Notifica el resultado a Google Chat.',
         endpoint: 'GET /api/validaciones/control-cargas',
-        link: `${baseUrl}/api/validaciones/control-cargas`
+        link: `${baseUrl}/api/validaciones/control-cargas`,
+        schedule: `Automático cada 5 minutos (${process.env.CONTROL_CARGAS_CRON || '*/5 * * * *'}) → Google Chat`
       }
     }
   });
