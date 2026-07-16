@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const dns = require('dns');
-const logger = require('../utils/logger');
+const logger = require('../logging/logger');
 
 // Preferir IPv4: en redes corporativas sin ruta IPv6, Node intenta primero
 // la IP v6 de Gmail y falla con "connect ENETUNREACH 2800:...:465"

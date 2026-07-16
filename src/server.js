@@ -1,8 +1,8 @@
 require('./config/env'); // Cargar y validar .env antes que todo
 const os = require('os');
-const db = require('./config/database');
-const { verificarConexion: verificarCorreo } = require('./config/mailer');
-const logger = require('./utils/logger');
+const db = require('./infrastructure/database/database');
+const { verificarConexion: verificarCorreo } = require('./infrastructure/email/mailer');
+const logger = require('./infrastructure/logging/logger');
 
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0'; // 0.0.0.0 = accesible desde la red por la IP de la máquina
@@ -42,7 +42,7 @@ async function iniciar() {
   }
 
   // 3. Cargar la app (inicializa rutas y tareas programadas) y levantar servidor HTTP
-  const app = require('./app');
+  const app = require('./infrastructure/server/app');
   const server = app.listen(PORT, HOST, () => {
     const BASE_URL = `http://${obtenerIpLocal()}:${PORT}`;
 

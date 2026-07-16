@@ -1,11 +1,11 @@
-const db = require('../../../config/database');
-const { generarExcel } = require('../../../utils/excel');
-const { enviarEmail } = require('../../../config/mailer');
-const { plantillaCorreoReporte } = require('../../../utils/email');
+const db = require('../../../infrastructure/database/database');
+const { generarExcel } = require('../../../shared/utils/excel');
+const { enviarEmail } = require('../../../infrastructure/email/mailer');
+const { plantillaCorreoReporte } = require('../../../shared/utils/email-template');
 const destinatarios = require('../../../config/destinatarios');
 const queries = require('./fondeo-estable.query');
-const { finDeMesAnterior, aYYYYMMDD } = require('../../../utils/fechas');
-const logger = require('../../../utils/logger');
+const { finDeMesAnterior, aYYYYMMDD } = require('../../../shared/utils/fechas');
+const logger = require('../../../infrastructure/logging/logger');
 
 class FondeoEstableService {
   /**

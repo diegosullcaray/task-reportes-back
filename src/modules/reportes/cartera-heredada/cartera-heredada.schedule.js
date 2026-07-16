@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const carteraHeredadaService = require('./cartera-heredada.service');
-const logger = require('../../../utils/logger');
+const logger = require('../../../infrastructure/logging/logger');
 
 const timezone = process.env.TZ_SCHEDULES || undefined;
 

@@ -1,5 +1,6 @@
 const { Connection, Request } = require('tedious');
-const logger = require('../utils/logger');
+const logger = require('../logging/logger');
+const { DatabaseError } = require('../../shared/errors');
 
 /**
  * Acceso a SQL Server.
@@ -64,7 +65,7 @@ class Database {
         if (err) {
           this.estado = 'SIN CONEXIÓN';
           logger.error(`✗ Error conectando a SQL Server: ${err.message}`);
-          reject(err);
+          reject(new DatabaseError(`Error conectando a SQL Server: ${err.message}`, err));
         } else {
           this.estado = 'CONECTADA';
           logger.debug('✓ Conectado a SQL Server');
@@ -89,7 +90,7 @@ class Database {
         const request = new Request(sql, (err) => {
           if (err) {
             logger.error(`Error ejecutando query: ${err.message}`);
-            reject(err);
+            reject(new DatabaseError(`Error ejecutando query: ${err.message}`, err));
           } else {
             resolve(results);
           }

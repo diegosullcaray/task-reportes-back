@@ -1,48 +1,19 @@
 const desembolsoCanalService = require('./desembolso-canal.service');
-const { parseFecha, finDeMesAnterior } = require('../../../utils/fechas');
-const logger = require('../../../utils/logger');
 
 class DesembolsoCanalController {
   /**
-   * POST /api/reportes/desembolso-canal/generar-ahora
-   * Body opcional: { "fecha": "20260630" } (o "2026-06-30"); por defecto fin del mes anterior
+   * req.fechaCierre ya viene validada por shared/validators/fecha.validator.js
    */
   async generarAhora(req, res) {
-    try {
-      let fechaCierre = finDeMesAnterior();
+    const resultado = await desembolsoCanalService.generarReporte(req.fechaCierre);
 
-      if (req.body?.fecha) {
-        fechaCierre = parseFecha(req.body.fecha);
-        if (!fechaCierre) {
-          return res.status(400).json({
-            success: false,
-            error: 'Formato de fecha inválido (use YYYYMMDD o YYYY-MM-DD)'
-          });
-        }
-      }
-
-      const resultado = await desembolsoCanalService.generarReporte(fechaCierre);
-
-      if (resultado.success) {
-        res.json({
-          success: true,
-          mensaje: 'Reporte Desembolso Canal generado y enviado',
-          data: resultado
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          mensaje: resultado.mensaje,
-          data: resultado
-        });
-      }
-    } catch (error) {
-      logger.error(`Error en controller desembolso canal: ${error.message}`);
-      res.status(500).json({
-        success: false,
-        error: error.message
-      });
-    }
+    res.status(resultado.success ? 200 : 400).json({
+      success: resultado.success,
+      mensaje: resultado.success
+        ? 'Reporte Desembolso Canal generado y enviado'
+        : resultado.mensaje,
+      data: resultado
+    });
   }
 }
 

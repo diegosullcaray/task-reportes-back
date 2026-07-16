@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const desembolsoCanalService = require('./desembolso-canal.service');
-const logger = require('../../../utils/logger');
+const logger = require('../../../infrastructure/logging/logger');
 
 const timezone = process.env.TZ_SCHEDULES || undefined;
 

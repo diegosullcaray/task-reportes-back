@@ -1,6 +1,6 @@
-const db = require('../../../config/database');
+const db = require('../../../infrastructure/database/database');
 const queries = require('./control-cargas.query');
-const logger = require('../../../utils/logger');
+const logger = require('../../../infrastructure/logging/logger');
 
 class ControlCargasService {
   /**
