@@ -43,7 +43,9 @@ src/
 │   │   │   └── *.schedule.js           #   node-cron: cuándo corre solo, sin HTTP de por medio
 │   │   ├── desembolso-canal/           # (mismo patrón)
 │   │   ├── fondeo-estable/             # (mismo patrón)
-│   │   └── reportes.schedules.js       # Agrega los 3 inicializarSchedules() en uno solo
+│   │   ├── ratio-ce/                   # Variante SIN Excel: el resultado va como tablas HTML
+│   │   │                               #   en el cuerpo del correo (reproduce la tabla dinámica)
+│   │   └── reportes.schedules.js       # Agrega los inicializarSchedules() de cada reporte en uno solo
 │   └── validaciones/
 │       └── control-cargas/             # GET de solo lectura, sin schedule (se consulta a demanda)
 │           ├── *.controller.js
@@ -56,6 +58,7 @@ src/
     ├── http/asyncHandler.js            # Envuelve handlers async: reenvía errores a next(err)
     ├── validators/fecha.validator.js   # req.body.fecha → req.fechaCierre (o 400 vía ValidationError)
     └── utils/
+        ├── html.js                     # Tablas HTML embebibles en correos (reportes sin Excel)
         ├── excel.js                    # Genera el .xlsx (exceljs) en xlsx_output/
         ├── fechas.js                   # Parseo/formato de fechas de cierre
         └── email-template.js           # HTML + firma corporativa de los correos de reporte

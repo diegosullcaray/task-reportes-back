@@ -45,6 +45,12 @@ router.get('/api/info', (req, res) => {
         endpoint: 'POST /api/reportes/fondeo-estable/generar-ahora',
         link: `${baseUrl}/api/reportes/fondeo-estable/generar-ahora`,
         schedule: 'Día 1 de cada mes 9:00 AM'
+      },
+      ratioCE: {
+        descripcion: 'Ratio CE, Clientes Nuevos y Migrantes al cierre de mes (resultado en el cuerpo del correo, sin Excel)',
+        endpoint: 'POST /api/reportes/ratio-ce/generar-ahora',
+        link: `${baseUrl}/api/reportes/ratio-ce/generar-ahora`,
+        schedule: 'Día 3 de cada mes 9:00 AM'
       }
     },
     validaciones: {

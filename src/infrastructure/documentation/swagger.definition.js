@@ -144,6 +144,20 @@ module.exports = {
         responses: respuestas('Reporte generado y enviado por correo')
       }
     },
+    '/api/reportes/ratio-ce/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Ratio CE, Clientes Nuevos y Migrantes',
+        description: 'Genera el "Datos Cierre" mensual: Ratio CE (desembolsos habilitados vs CE) y '
+          + 'la tabla dinámica de clientes nuevos por condición migratoria (Peruano/Migrante) y zona '
+          + '(Rural/Urbano/Indeterminado). '
+          + '⚠️ A diferencia de los otros reportes NO adjunta Excel: el resultado va como tablas HTML '
+          + 'en el cuerpo del correo (asunto "Datos Cierre - <YYYYMMDD>"). '
+          + 'Programado: día 3 de cada mes 9:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo (tablas en el cuerpo, sin adjunto)')
+      }
+    },
     '/api/validaciones/control-cargas': {
       get: {
         tags: ['Validaciones'],

@@ -23,5 +23,10 @@ module.exports = {
   fondeoEstable: {
     para: parseLista(process.env.FONDEO_ESTABLE_PARA, []),
     cc: parseLista(process.env.FONDEO_ESTABLE_CC, [])
+  },
+
+  ratioCE: {
+    para: parseLista(process.env.RATIO_CE_PARA, []),
+    cc: parseLista(process.env.RATIO_CE_CC, [])
   }
 };
