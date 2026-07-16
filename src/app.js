@@ -8,6 +8,7 @@ const logger = require('./utils/logger');
 const carteraHeredadaController = require('./modules/Reportes/cartera-heredada/cartera-heredada.controller');
 const desembolsoCanalController = require('./modules/Reportes/desembolso-canal/desembolso-canal.controller');
 const fondeoEstableController = require('./modules/Reportes/fondeo-estable/fondeo-estable.controller');
+const controlCargasController = require('./modules/Validaciones/control-cargas/control-cargas.controller');
 
 // Importar schedules (tareas programadas vía cron)
 const { inicializarSchedules: carteraHeredadaSchedules } = require('./modules/Reportes/cartera-heredada/cartera-heredada.schedule');
@@ -44,6 +45,41 @@ app.post('/api/reportes/desembolso-canal/generar-ahora', (req, res) =>
 
 app.post('/api/reportes/fondeo-estable/generar-ahora', (req, res) =>
   fondeoEstableController.generarAhora(req, res)
+);
+
+// ============== RUTAS VALIDACIONES Y CONTROL DE CARGAS ==============
+
+/**
+ * @swagger
+ * /api/validaciones/control-cargas:
+ * get:
+ * summary: Obtiene el estado de las cargas de datos
+ * description: Retorna un reporte en tiempo real detallando qué tareas están pendientes, su estado actual y valida si las carteras activas y pasivas ya finalizaron.
+ * tags:
+ * - Validaciones
+ * responses:
+ * 200:
+ * description: Reporte generado correctamente.
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * properties:
+ * success:
+ * type: boolean
+ * resumenCritico:
+ * type: object
+ * totales:
+ * type: object
+ * procesosPendientes:
+ * type: array
+ * procesosFinalizados:
+ * type: array
+ * 500:
+ * description: Error interno del servidor al procesar las validaciones.
+ */
+app.get('/api/validaciones/control-cargas', (req, res) =>
+  controlCargasController.obtenerEstado(req, res)
 );
 
 // ============== HEALTH CHECK ==============
@@ -83,6 +119,13 @@ app.get('/api/info', (req, res) => {
         endpoint: 'POST /api/reportes/fondeo-estable/generar-ahora',
         link: `${baseUrl}/api/reportes/fondeo-estable/generar-ahora`,
         schedule: 'Día 1 de cada mes 9:00 AM'
+      }
+    },
+    validaciones: {
+      controlCargas: {
+        descripcion: 'Control y verificación del estado de las cargas en el servidor de Base de Datos (Activas, Pasivas, etc.)',
+        endpoint: 'GET /api/validaciones/control-cargas',
+        link: `${baseUrl}/api/validaciones/control-cargas`
       }
     }
   });

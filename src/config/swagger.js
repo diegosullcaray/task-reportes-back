@@ -1,6 +1,6 @@
 /**
  * Especificación OpenAPI 3.0 para Swagger UI (/api-docs).
- * Documenta las tareas manuales del backend de reportes.
+ * Documenta las tareas manuales del backend de reportes y validaciones.
  */
 
 const bodyFecha = {
@@ -103,6 +103,7 @@ module.exports = {
   ],
   tags: [
     { name: 'Reportes Mensuales', description: 'Ejecución manual de los reportes (por defecto al cierre del mes anterior)' },
+    { name: 'Validaciones', description: 'Control de cargas y verificaciones clave de base de datos' },
     { name: 'Utilidad', description: 'Health check e información de la API' }
   ],
   paths: {
@@ -141,6 +142,60 @@ module.exports = {
           + 'Programado: día 1 de cada mes 9:00 AM.',
         requestBody: bodyFecha,
         responses: respuestas('Reporte generado y enviado por correo')
+      }
+    },
+    '/api/validaciones/control-cargas': {
+      get: {
+        tags: ['Validaciones'],
+        summary: 'Obtiene el estado de las cargas de datos',
+        description: 'Retorna un reporte detallando qué tareas de carga están pendientes, su estado actual y valida de forma prioritaria si las carteras activas y pasivas ya finalizaron.',
+        responses: {
+          200: {
+            description: 'Estado de cargas obtenido y validado exitosamente',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: true },
+                    resumenCritico: {
+                      type: 'object',
+                      properties: {
+                        carterasActivasYPasivasListas: { type: 'boolean', example: true },
+                        mensaje: { type: 'string', example: '✅ Excelente. Las carteras activas y pasivas han finalizado sus cargas correctamente.' },
+                        procesosCriticosEvaluados: { type: 'array', items: { type: 'object' } }
+                      }
+                    },
+                    totales: {
+                      type: 'object',
+                      properties: {
+                        totalProcesos: { type: 'integer', example: 10 },
+                        pendientes: { type: 'integer', example: 0 },
+                        finalizados: { type: 'integer', example: 10 }
+                      }
+                    },
+                    procesosPendientes: { type: 'array', items: { type: 'object' } },
+                    procesosFinalizados: { type: 'array', items: { type: 'object' } }
+                  }
+                }
+              }
+            }
+          },
+          500: {
+            description: 'Error al consultar la base de datos',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean', example: false },
+                    error: { type: 'string', example: 'Fallo al ejecutar procedimiento almacenado' }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     '/health': {
