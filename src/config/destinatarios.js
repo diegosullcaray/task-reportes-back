@@ -28,5 +28,30 @@ module.exports = {
   ratioCE: {
     para: parseLista(process.env.RATIO_CE_PARA, []),
     cc: parseLista(process.env.RATIO_CE_CC, [])
+  },
+
+  reporteGiancarlo: {
+    para: parseLista(process.env.REPORTE_GIANCARLO_PARA, []),
+    cc: parseLista(process.env.REPORTE_GIANCARLO_CC, [])
+  },
+
+  saldoMedioVigente: {
+    para: parseLista(process.env.SALDO_MEDIO_VIGENTE_PARA, []),
+    cc: parseLista(process.env.SALDO_MEDIO_VIGENTE_CC, [])
+  },
+
+  saldoPuntualMedio: {
+    para: parseLista(process.env.SALDO_PUNTUAL_MEDIO_PARA, []),
+    cc: parseLista(process.env.SALDO_PUNTUAL_MEDIO_CC, [])
+  },
+
+  saldoVigenteAgro: {
+    para: parseLista(process.env.SALDO_VIGENTE_AGRO_PARA, []),
+    cc: parseLista(process.env.SALDO_VIGENTE_AGRO_CC, [])
+  },
+
+  reporteSeguros: {
+    para: parseLista(process.env.REPORTE_SEGUROS_PARA, []),
+    cc: parseLista(process.env.REPORTE_SEGUROS_CC, [])
   }
 };

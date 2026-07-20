@@ -158,6 +158,65 @@ module.exports = {
         responses: respuestas('Reporte generado y enviado por correo (tablas en el cuerpo, sin adjunto)')
       }
     },
+    '/api/reportes/reporte-giancarlo/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Saca tu Garra (Reporte Giancarlo)',
+        description: 'Genera la variación de saldo vigente, productividad y ratios de recuperación (0-30 y 1-30) '
+          + 'por asesor al cierre de mes y lo envía a Giancarlo Hijar (Cc: Michael Palacios, Abigail Jaimes). '
+          + 'Adjunto: "Base Saca tu Garra_<YYYYMMDD>.xlsx". '
+          + 'Programado: día 2 de cada mes 10:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo')
+      }
+    },
+    '/api/reportes/saldo-medio-vigente/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Saldo Medio Vigente (Diana)',
+        description: 'Genera el saldo medio vigente total al cierre de mes junto con su detalle diario y lo envía '
+          + 'a Diana García (Cc: Michael Palacios, Jorge Mercedes). '
+          + '⚠️ A diferencia de los otros reportes NO adjunta Excel: el resultado va en el cuerpo del correo '
+          + '(asunto "Saldo Medio Vigente - <Mes Año>"). '
+          + 'Programado: día 3 de cada mes 10:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo (sin adjunto)')
+      }
+    },
+    '/api/reportes/saldo-puntual-medio/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Saldo Puntual - Saldo Medio (Giovani)',
+        description: 'Genera el saldo puntual y el saldo medio por agencia y producto al cierre de mes. '
+          + 'Adjunto: "Saldo_puntual-Saldo_Medio_<YYYYMMDD>.xlsx" con 2 hojas (Saldo Puntual / Saldo Medio). '
+          + 'Programado: día 4 de cada mes 9:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo')
+      }
+    },
+    '/api/reportes/saldo-vigente-agro/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Saldo Vigente - Producto Agro (Giovani)',
+        description: 'Genera el saldo vigente del producto Agro al cierre de mes, el del mes anterior y el '
+          + 'comparativo de cierre de operaciones por jerarquía comercial. '
+          + 'Adjunto: "Cartera_VigenteAgro_<YYYYMMDD>.xlsx" con 3 hojas. '
+          + 'Programado: día 4 de cada mes 10:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo')
+      }
+    },
+    '/api/reportes/reporte-seguros/generar-ahora': {
+      post: {
+        tags: ['Reportes Mensuales'],
+        summary: 'Utilizas Seguros (Giovani)',
+        description: 'Genera la penetración de seguros por producto (Cartera vs Seguro) y nivel comercial al '
+          + 'cierre de mes. Adjunto: "Reporte Seguros <YYYYMMDD>.xlsx". '
+          + 'Programado: día 4 de cada mes 11:00 AM.',
+        requestBody: bodyFecha,
+        responses: respuestas('Reporte generado y enviado por correo')
+      }
+    },
     '/api/validaciones/control-cargas': {
       get: {
         tags: ['Validaciones'],

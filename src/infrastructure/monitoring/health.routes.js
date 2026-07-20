@@ -51,6 +51,36 @@ router.get('/api/info', (req, res) => {
         endpoint: 'POST /api/reportes/ratio-ce/generar-ahora',
         link: `${baseUrl}/api/reportes/ratio-ce/generar-ahora`,
         schedule: 'Día 3 de cada mes 9:00 AM'
+      },
+      reporteGiancarlo: {
+        descripcion: 'Saca tu Garra: variación de saldo vigente, productividad y ratios de recuperación por asesor',
+        endpoint: 'POST /api/reportes/reporte-giancarlo/generar-ahora',
+        link: `${baseUrl}/api/reportes/reporte-giancarlo/generar-ahora`,
+        schedule: 'Día 2 de cada mes 10:00 AM'
+      },
+      saldoMedioVigente: {
+        descripcion: 'Saldo medio vigente al cierre de mes (resultado en el cuerpo del correo, sin Excel)',
+        endpoint: 'POST /api/reportes/saldo-medio-vigente/generar-ahora',
+        link: `${baseUrl}/api/reportes/saldo-medio-vigente/generar-ahora`,
+        schedule: 'Día 3 de cada mes 10:00 AM'
+      },
+      saldoPuntualMedio: {
+        descripcion: 'Saldo puntual y saldo medio por agencia y producto al cierre de mes (Excel con 2 hojas)',
+        endpoint: 'POST /api/reportes/saldo-puntual-medio/generar-ahora',
+        link: `${baseUrl}/api/reportes/saldo-puntual-medio/generar-ahora`,
+        schedule: 'Día 4 de cada mes 9:00 AM'
+      },
+      saldoVigenteAgro: {
+        descripcion: 'Saldo vigente del producto Agro (actual, mes anterior y comparativo de cierre) por jerarquía comercial (Excel con 3 hojas)',
+        endpoint: 'POST /api/reportes/saldo-vigente-agro/generar-ahora',
+        link: `${baseUrl}/api/reportes/saldo-vigente-agro/generar-ahora`,
+        schedule: 'Día 4 de cada mes 10:00 AM'
+      },
+      reporteSeguros: {
+        descripcion: 'Utilizas Seguros: penetración de seguros por producto y nivel comercial al cierre de mes',
+        endpoint: 'POST /api/reportes/reporte-seguros/generar-ahora',
+        link: `${baseUrl}/api/reportes/reporte-seguros/generar-ahora`,
+        schedule: 'Día 4 de cada mes 11:00 AM'
       }
     },
     validaciones: {

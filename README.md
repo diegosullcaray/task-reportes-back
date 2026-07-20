@@ -6,15 +6,22 @@ Backend en **Node.js + Express** que automatiza la generación y envío por corr
 
 ## Reportes mensuales
 
-Los tres reportes usan como fecha de cierre el **fin del mes anterior** (ej. si corre el 1 de julio, cierre = `20260630`). Documentación fuente en `.docs/MENSUALES/`.
+Todos los reportes usan como fecha de cierre el **fin del mes anterior** (ej. si corre el 1 de julio, cierre = `20260630`). Documentación fuente en `.docs/MENSUALES/`.
 
 | Reporte | Asunto del correo | Adjunto | Para | Cc | Schedule |
 |---|---|---|---|---|---|
 | **Cartera Heredada PDM** | `Cartera Heredada PDM - Stock Junio 2026` | `PDM Heredado Junio 26.xlsx` | Abigail Jaimes, Karla Campos, Ricardo Lazo, Alvaro Calderon | Michael Palacios | Día 2 de cada mes, 9:00 AM |
 | **Desembolso Canal** | `Desembolso Canal - 20260630` | `Desembolsos_canal_20260630.xlsx` | Sergio Sandoval, Sebastien Puertas | Abigail Jaimes, Michael Palacios | Día 1 de cada mes, 2:30 PM |
 | **Fondeo Estable** | `Fondeo Estable - 20260630` | `Saldo_FondeoEstable_20260630.xlsx` | Eddy Martinez | Michael Palacios, Abigail Jaimes | Día 1 de cada mes, 9:00 AM |
+| **Ratio CE, Clientes Nuevos y Migrantes** | `Datos Cierre - 20260630` | _(sin Excel, tablas en el correo)_ | — | — | Día 3 de cada mes, 9:00 AM |
+| **Saca tu Garra** (Reporte Giancarlo) | `Saca tu Garra - 20260630` | `Base Saca tu Garra_20260630.xlsx` | Giancarlo Hijar | Michael Palacios, Abigail Jaimes | Día 2 de cada mes, 10:00 AM |
+| **Saldo Medio Vigente** (Diana) | `Saldo Medio Vigente - Junio 2026` | _(sin Excel, valor + tabla en el correo)_ | Diana García | Michael Palacios, Jorge Mercedes | Día 3 de cada mes, 10:00 AM |
+| **Saldo Puntual - Saldo Medio** (Giovani) | `Saldo Puntual - Saldo Medio - 20260630` | `Saldo_puntual-Saldo_Medio_20260630.xlsx` (2 hojas) | _(configurar por env)_ | _(configurar por env)_ | Día 4 de cada mes, 9:00 AM |
+| **Saldo Vigente - Producto Agro** (Giovani) | `Saldo Vigente Agro - 20260630` | `Cartera_VigenteAgro_20260630.xlsx` (3 hojas) | _(configurar por env)_ | _(configurar por env)_ | Día 4 de cada mes, 10:00 AM |
+| **Utilizas Seguros** (Giovani) | `Utilizas Seguros - 20260630` | `Reporte Seguros 20260630.xlsx` | _(configurar por env)_ | _(configurar por env)_ | Día 4 de cada mes, 11:00 AM |
 
 > 📌 **Cartera Heredada PDM** requiere que toda la data del cubo y PDM estén completadas en el Servidor 213; por eso corre el día 2. Si aún no está lista, relanzar manualmente con el endpoint.
+> 📌 Los reportes de Giovani (Saldo Puntual - Saldo Medio, Saldo Vigente Agro, Utilizas Seguros) no traían un correo de ejemplo con destinatarios reales; configurar `SALDO_PUNTUAL_MEDIO_PARA/_CC`, `SALDO_VIGENTE_AGRO_PARA/_CC` y `REPORTE_SEGUROS_PARA/_CC` en `.env` antes de habilitarlos en producción.
 
 ## Documentación Swagger
 
@@ -50,6 +57,12 @@ Todas aceptan un body opcional `{ "fecha": "20260630" }` (o `"2026-06-30"`) para
 POST /api/reportes/cartera-heredada/generar-ahora
 POST /api/reportes/desembolso-canal/generar-ahora
 POST /api/reportes/fondeo-estable/generar-ahora
+POST /api/reportes/ratio-ce/generar-ahora
+POST /api/reportes/reporte-giancarlo/generar-ahora
+POST /api/reportes/saldo-medio-vigente/generar-ahora
+POST /api/reportes/saldo-puntual-medio/generar-ahora
+POST /api/reportes/saldo-vigente-agro/generar-ahora
+POST /api/reportes/reporte-seguros/generar-ahora
 
 GET /health      # health check + estado de la BD
 GET /api/info    # lista de reportes con links, endpoints y horarios
@@ -95,7 +108,7 @@ DB_TRUST_CERTIFICATE=true
 | `DB_INSTANCE` / `DB_PORT` | Instancia con nombre (ej. `SQLEXPRESS`) o puerto fijo (default 1433) |
 | `EMAIL_USER` / `EMAIL_PASSWORD` | `diego.sullcaray@confianza.pe` + contraseña de aplicación de Google (16 dígitos) |
 | `EMAIL_FIRMA_NOMBRE` / `EMAIL_FIRMA_CARGO` | Firma que aparece en los correos |
-| `CARTERA_HEREDADA_PARA` / `_CC`, `DESEMBOLSO_CANAL_PARA` / `_CC`, `FONDEO_ESTABLE_PARA` / `_CC` | Sobreescriben los destinatarios por defecto (listas separadas por comas) |
+| `CARTERA_HEREDADA_PARA` / `_CC`, `DESEMBOLSO_CANAL_PARA` / `_CC`, `FONDEO_ESTABLE_PARA` / `_CC`, `RATIO_CE_PARA` / `_CC`, `REPORTE_GIANCARLO_PARA` / `_CC`, `SALDO_MEDIO_VIGENTE_PARA` / `_CC`, `SALDO_PUNTUAL_MEDIO_PARA` / `_CC`, `SALDO_VIGENTE_AGRO_PARA` / `_CC`, `REPORTE_SEGUROS_PARA` / `_CC` | Sobreescriben los destinatarios por defecto (listas separadas por comas) |
 | `TZ_SCHEDULES` | Zona horaria de los cron jobs (`America/Lima`) |
 | `HOST` / `PORT` | Dónde escucha el servidor. `HOST=0.0.0.0` (default) lo hace accesible desde la red por la IP de la máquina |
 
@@ -111,7 +124,13 @@ src/
 ├── modules/
 │   ├── cartera-heredada/  # *.query.js, *.service.js, *.controller.js, *.schedule.js
 │   ├── desembolso-canal/
-│   └── fondeo-estable/
+│   ├── fondeo-estable/
+│   ├── ratio-ce/
+│   ├── reporte-giancarlo/
+│   ├── saldo-medio-vigente/
+│   ├── saldo-puntual-medio/
+│   ├── saldo-vigente-agro/
+│   └── reporte-seguros/
 ├── utils/
 │   ├── excel.js           # Generador de Excel (ExcelJS)
 │   ├── email.js           # Plantilla HTML corporativa + firma

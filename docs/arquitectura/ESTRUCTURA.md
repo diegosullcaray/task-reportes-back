@@ -45,6 +45,12 @@ src/
 │   │   ├── fondeo-estable/             # (mismo patrón)
 │   │   ├── ratio-ce/                   # Variante SIN Excel: el resultado va como tablas HTML
 │   │   │                               #   en el cuerpo del correo (reproduce la tabla dinámica)
+│   │   ├── reporte-giancarlo/          # "Saca tu Garra": variación de saldo vigente,
+│   │   │                               #   productividad y ratios de recuperación por asesor
+│   │   ├── saldo-medio-vigente/        # Variante SIN Excel: valor total + tabla diaria en el correo
+│   │   ├── saldo-puntual-medio/        # Excel con 2 hojas (generarExcelMultiHoja)
+│   │   ├── saldo-vigente-agro/         # Excel con 3 hojas (actual / anterior / comparativo cierre)
+│   │   ├── reporte-seguros/            # "Utilizas Seguros": penetración de seguros por producto
 │   │   └── reportes.schedules.js       # Agrega los inicializarSchedules() de cada reporte en uno solo
 │   ├── validaciones/
 │   │   ├── control-cargas/             # GET a demanda + cron cada 5 min; notifica a Google Chat
@@ -62,7 +68,8 @@ src/
     ├── validators/fecha.validator.js   # req.body.fecha → req.fechaCierre (o 400 vía ValidationError)
     └── utils/
         ├── html.js                     # Tablas HTML embebibles en correos (reportes sin Excel)
-        ├── excel.js                    # Genera el .xlsx (exceljs) en xlsx_output/
+        ├── excel.js                    # Genera el .xlsx (exceljs) en xlsx_output/: generarExcel
+        │                               #   (1 hoja) y generarExcelMultiHoja (N hojas, mismo formato)
         ├── fechas.js                   # Parseo/formato de fechas de cierre
         └── email-template.js           # HTML + firma corporativa de los correos de reporte
 ```
